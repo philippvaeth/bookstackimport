@@ -1,0 +1,51 @@
+<script>
+  
+  function modifyLinks() {
+    file_extensions_iframe = ['mov','mp4','pdf','conf','sh','txt'];
+    file_extensions_img = ['jpg','png','jpeg'];
+	
+    function previewImg(){
+      if (this.hasAttribute("width")){
+        this.removeAttribute("width"); } //make img page width
+      else {
+      	this.setAttribute("width","25%"); //make to preview size
+      }
+    }
+
+    Array.from(document.querySelectorAll("a[href*=\\/attachments\\/]").values())
+      .filter(a => a.href.indexOf("?open") == -1)
+      .forEach(a => a.href += "?open=true");
+   
+    Array.from(document.querySelectorAll("a[href*=\\/attachments\\/]").values())
+    .filter(a => !a.parentElement.classList.contains("attachment-file"))
+     .filter(a => !a.classList.contains("label-item"))
+      .filter(a => file_extensions_iframe.includes(a.text.split('.').pop()))
+       .forEach(a => {
+       let divContainer = document.createElement("div");
+       let iframe =  document.createElement("iframe");
+       iframe.setAttribute("src", a.href)
+       iframe.setAttribute("width", "100%")
+       iframe.setAttribute("height", "600px")
+       iframe.setAttribute("autoplay", "")
+       divContainer.append(iframe)
+       a.parentElement.append(divContainer);
+    });
+    
+    
+    Array.from(document.querySelectorAll("a[href*=\\/attachments\\/]").values())
+    .filter(a => !a.parentElement.classList.contains("attachment-file"))
+     .filter(a => file_extensions_img.includes(a.text.split('.').pop()))
+      .forEach(a => {
+      let divContainer = document.createElement("div");
+      let img =  document.createElement("img");
+      img.setAttribute("width", "25%")
+      img.addEventListener("click", previewImg, false)
+      img.setAttribute("src", a.href)
+      divContainer.append(img)
+      a.parentElement.append(divContainer);
+    });
+  }
+  
+  window.onload = modifyLinks;
+  window.uploadTimeout = 1200*1000;
+</script>
